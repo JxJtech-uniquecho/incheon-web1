@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인천시약사회 회원 소속감 증진 방안</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Subtle Green Accents -->
+    <!-- Application Structure Plan: The application is designed as a single-page interactive dashboard, moving away from the linear report format. The structure includes: 1) A main title and introduction. 2) A section highlighting the core problem ('Why is this important?'), using visual cues for key concepts like 'Quiet Quitting'. 3) An interactive hub with three main tabs for the core strategies (Communication, Professionalism, Social Responsibility), allowing users to explore detailed solutions. 4) An interactive radar chart visualizing the impact of these strategies. 5) A section on historical lessons as context. This thematic, interactive structure was chosen to make the dense report content more digestible, engaging, and user-friendly, enabling non-linear exploration of the key findings and recommendations. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation -> Interaction -> Justification. 1) Core Problem -> Inform/Warn -> Styled text blocks with icons -> Static display -> Emphasizes urgency. 2) Proposed Solutions -> Explore/Detail -> Interactive cards (HTML/CSS) -> Click to expand -> Allows users to drill down into details without being overwhelmed. 3) Strategy Impact -> Synthesize/Compare -> Radar Chart (Chart.js/Canvas) -> Hover for tooltips -> Provides a quick, visual summary of how different strategies contribute to key goals like 'Participation' and 'Pride'. 4) Historical Cases -> Contextualize -> Simple list format -> Static display -> Provides necessary background without distracting from the main solutions. This approach uses interactive elements to manage information complexity and focuses user attention on the actionable solutions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .tab-active {
+            border-color: #10B981;
+            color: #10B981;
+            font-weight: 600;
+        }
+        .card {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .card .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .card.open .content {
+            max-height: 1000px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">인천시약사회, 회원의 마음을 얻는 길</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">본 애플리케이션은 '인천시약사회 회원 소속감 강화 방안 보고서'의 핵심 내용을 기반으로, 회원 중심의 개방적이고 활력 넘치는 약사회를 만들기 위한 구체적인 전략과 방안을 대화형으로 제시합니다.</p>
+        </header>
+
+        <main>
+            <section id="problem" class="mb-16 bg-white p-8 rounded-xl shadow-md">
+                <h2 class="text-3xl font-bold text-center mb-6 text-emerald-700">왜 '소속감'이 중요한가?</h2>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-amber-50 p-6 rounded-lg">
+                        <span class="text-4xl mb-2">⚠️</span>
+                        <h3 class="text-xl font-semibold mb-2">폐쇄성의 함정</h3>
+                        <p class="text-gray-600">내부 지향적 문화는 외부와의 단절, 사회적 신뢰 상실로 이어집니다. '집단 사고'는 혁신을 저해하고 조직의 적응력을 떨어뜨립니다.</p>
+                    </div>
+                    <div class="bg-rose-50 p-6 rounded-lg">
+                        <span class="text-4xl mb-2">🤫</span>
+                        <h3 class="text-xl font-semibold mb-2">조용한 퇴직 (Quiet Quitting)</h3>
+                        <p class="text-gray-600">회원들이 최소한의 의무만 다할 뿐, 적극적인 참여와 헌신을 멈추는 현상입니다. 이는 협회의 활력을 미묘하게 약화시킵니다.</p>
+                    </div>
+                    <div class="bg-sky-50 p-6 rounded-lg">
+                        <span class="text-4xl mb-2">🛡️</span>
+                        <h3 class="text-xl font-semibold mb-2">신뢰의 붕괴</h3>
+                        <p class="text-gray-600">직능 이기주의로 비춰지는 순간, 대중의 신뢰는 무너지고 외부 규제와 감시를 자초하게 됩니다. (예: 의협, 변협 사례)</p>
+                    </div>
+                </div>
+                 <p class="text-center mt-8 text-gray-700">이러한 문제들을 극복하고, 모든 회원이 자부심을 느끼는 인천시약사회를 만들기 위한 3대 핵심 전략과 구체적인 실행 방안을 아래에서 탐색해 보세요.</p>
+            </section>
+
+            <section id="solutions" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">소속감 강화를 위한 3대 핵심 전략</h2>
+                
+                <div class="mb-8 border-b border-gray-200">
+                    <nav class="flex justify-center -mb-px space-x-6" aria-label="Tabs">
+                        <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 tab-active" data-tab="communication">
+                            소통 및 참여
+                        </button>
+                        <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="professionalism">
+                            가치 및 전문성
+                        </button>
+                        <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="responsibility">
+                            사회적 책임
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="tab-content">
+                </div>
+            </section>
+            
+            <section id="impact-visualization" class="mb-16 bg-white p-8 rounded-xl shadow-md">
+                <h2 class="text-3xl font-bold text-center mb-2 text-emerald-700">전략이 만드는 긍정적 변화</h2>
+                <p class="text-center text-gray-600 mb-8">우리가 제안하는 전략들은 회원 참여, 전문성, 자부심 등 다방면에 걸쳐 긍정적인 영향을 미칠 것입니다. 아래 차트를 통해 각 전략이 목표 달성에 어떻게 기여하는지 확인해 보세요.</p>
+                <div class="chart-container">
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </section>
+
+            <section id="lessons" class="bg-gray-100 p-8 rounded-xl">
+                <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">타산지석: 국내외 사례의 교훈</h2>
+                 <p class="text-center text-gray-600 mb-8">과거 전문직 단체들의 실패는 우리에게 중요한 교훈을 줍니다. 폐쇄적 운영이 아닌, 사회와 소통하고 공공의 이익을 추구하는 것이 왜 중요한지 아래 사례들을 통해 알 수 있습니다.</p>
+                <div class="space-y-4 max-w-4xl mx-auto">
+                    <details class="bg-white p-4 rounded-lg shadow-sm cursor-pointer">
+                        <summary class="font-semibold text-lg">대한의사협회(KMA): 국민 공감 실패</summary>
+                        <p class="mt-2 text-gray-600">의대 증원 갈등에서 보인 폐쇄적 소통 방식과 감정적 대응은 대중의 신뢰를 잃고 내부 분열을 초래했습니다.</p>
+                    </details>
+                    <details class="bg-white p-4 rounded-lg shadow-sm cursor-pointer">
+                        <summary class="font-semibold text-lg">대한변호사협회(KBA): 직역 이기주의 비판</summary>
+                        <p class="mt-2 text-gray-600">법률 플랫폼 이용 금지 시도는 공공성보다 집단 이익을 우선시한다는 비판을 받으며 외부 규제 개입의 빌미를 제공했습니다.</p>
+                    </details>
+                    <details class="bg-white p-4 rounded-lg shadow-sm cursor-pointer">
+                        <summary class="font-semibold text-lg">미국 의사협회(AMA): 차별과 독점의 역사</summary>
+                        <p class="mt-2 text-gray-600">의사 공급 제한, 인종/성차별적 회원 정책 등은 공공의 이익에 반하는 행위로 큰 비판을 받고 독점금지법 위반 판결까지 받았습니다.</p>
+                    </details>
+                     <details class="bg-white p-4 rounded-lg shadow-sm cursor-pointer">
+                        <summary class="font-semibold text-lg">아서 앤더슨(Arthur Andersen): 윤리적 실패와 붕괴</summary>
+                        <p class="mt-2 text-gray-600">엔론 사태에 연루되어 회계법인의 윤리적 책임을 저버린 결과는 조직의 파산이라는 치명적 결과로 이어졌습니다.</p>
+                    </details>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+            <p class="text-gray-500">이 애플리케이션은 제공된 보고서를 기반으로 생성되었습니다.</p>
+            <p class="text-sm text-gray-400 mt-2">최종 업데이트: 2025년 8월 1일</p>
+        </footer>
+    </div>
+
+    <script>
+        const solutionData = {
+            communication: {
+                title: '소통 및 참여 활성화',
+                intro: '회원들이 단순한 정보 수용자를 넘어, 협회 활동의 능동적인 주체로 참여하도록 유도하여 주인의식을 고취시키는 전략입니다. 온라인과 오프라인을 넘나드는 활발한 교류의 장을 만듭니다.',
+                items: [
+                    { 
+                        icon: '💬',
+                        title: '온라인 커뮤니티 혁신', 
+                        details: '기존 게시판을 넘어 소셜 미디어 형태의 \'회원 피드\', 관심사별 \'소그룹\' 기능을 활성화하고, 온라인 강연 및 토론회를 정기적으로 개최합니다. KPA-PASS 앱 활용도 극대화합니다.' 
+                    },
+                    { 
+                        icon: '📝',
+                        title: '체계적인 피드백 시스템', 
+                        details: '정기적인 회원 만족도 조사, \'회장에게 바란다\' 채널 상시 운영, 지역/직역별 간담회 활성화를 통해 회원 목소리를 회무에 투명하게 반영하고 신뢰를 구축합니다.' 
+                    },
+                    { 
+                        icon: '🙌',
+                        title: '회원 주도형 활동 장려', 
+                        details: '회원들이 직접 전문 지식을 공유하고(세미나, 온라인 게시), 봉사/문화 활동을 기획하며, 우수 회원을 조명하는 \'회원 스포트라이트\'를 통해 주인의식과 참여 동기를 높입니다.' 
+                    }
+                ]
+            },
+            professionalism: {
+                title: '맞춤형 가치 제공 및 전문성 증진',
+                intro: '회원 개개인의 직업적 성장과 만족도를 높이고, 협회가 제공하는 실질적인 혜택을 체감하게 하는 전략입니다. 약사로서의 전문성을 강화하고 자부심을 느낄 수 있도록 지원합니다.',
+                items: [
+                    { 
+                        icon: '🚀',
+                        title: '신규 회원 온보딩 강화', 
+                        details: '가입 초기부터 개인화된 환영 키트, 전용 안내 세션, 선배 약사와의 멘토 연결 프로그램을 통해 신규 회원의 빠른 적응을 돕고 긍정적인 첫인상을 구축합니다.' 
+                    },
+                    { 
+                        icon: '📚',
+                        title: '지속적인 전문성 개발 지원', 
+                        details: '직역별/분야별 맞춤형 연수교육, 사이버 연수원 콘텐츠 강화, 국내외 전문가 초청 워크숍, 전문 약사 자격증 취득 지원 등을 통해 회원들의 경쟁력을 높입니다.' 
+                    },
+                    { 
+                        icon: '🤝',
+                        title: '멘토십 및 네트워킹 활성화', 
+                        details: '신규/개국 예정 약사를 위한 정기적인 멘토-멘티 매칭, 분회/직역별 모임 및 문화/스포츠 행사 등 다채로운 네트워킹 기회를 제공하여 회원 간의 유대감을 강화합니다.' 
+                    }
+                ]
+            },
+            responsibility: {
+                title: '사회적 책임 및 공공성 강화',
+                intro: '약사 직능의 긍정적인 사회적 이미지를 구축하고, 회원들이 직업에 대한 자부심을 느끼도록 하여 소속감을 심화시키는 전략입니다. 지역사회에 기여하며 신뢰를 쌓습니다.',
+                items: [
+                    { 
+                        icon: '🌍',
+                        title: '지역사회 공헌 활동 확대', 
+                        details: '기존의 약료 봉사, 공공심야약국, 취약계층 지원 활동을 넘어, 회원 수요를 반영한 신규 프로그램을 개발합니다. (예: 특정 질환 관리 캠페인)' 
+                    },
+                    { 
+                        icon: '🔗',
+                        title: '지역사회 연계 강화', 
+                        details: '인천시, 보건소, 비영리 단체 등과 협력하여 약사 직능이 기여할 수 있는 사회공헌 활동을 발굴하고 정례화하여 지역사회 문제 해결에 적극적으로 참여합니다.' 
+                    },
+                    { 
+                        icon: '💖',
+                        title: '회원 참여 시스템 구축 및 홍보', 
+                        details: '온라인 자원봉사 신청 시스템을 구축하고, 우수 참여 회원 포상, 활동 성과 홍보 강화를 통해 더 많은 회원의 자발적인 참여를 유도하고 자부심을 고취시킵니다.' 
+                    }
+                ]
+            }
+        };
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContentContainer = document.getElementById('tab-content');
+
+        function renderTabContent(tabKey) {
+            const data = solutionData[tabKey];
+            let contentHtml = `
+                <div class="tab-pane text-center px-4" id="${tabKey}">
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-10">${data.intro}</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            `;
+
+            data.items.forEach(item => {
+                contentHtml += `
+                    <div class="card bg-white rounded-xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex items-center justify-center text-3xl bg-emerald-100 rounded-full w-16 h-16 mx-auto mb-4">
+                            ${item.icon}
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-3">${item.title}</h4>
+                        <div class="content text-gray-600">
+                            <p>${item.details}</p>
+                        </div>
+                        <div class="text-emerald-600 font-semibold mt-4">자세히 보기 ▼</div>
+                    </div>
+                `;
+            });
+
+            contentHtml += `</div></div>`;
+            tabContentContainer.innerHTML = contentHtml;
+            
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('open');
+                });
+            });
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+                button.classList.add('tab-active');
+                const tabKey = button.getAttribute('data-tab');
+                renderTabContent(tabKey);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTabContent('communication');
+            
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            const impactChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['회원 참여도 증진', '전문성 강화', '직업적 자부심', '내부 소통 원활', '대외 신뢰도 향상', '신규회원 정착'],
+                    datasets: [{
+                        label: '소통 및 참여',
+                        data: [5, 2, 4, 5, 4, 3],
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)'
+                    }, {
+                        label: '가치 및 전문성',
+                        data: [4, 5, 5, 3, 4, 5],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                    }, {
+                        label: '사회적 책임',
+                        data: [3, 2, 5, 2, 5, 2],
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        borderColor: 'rgba(249, 115, 22, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(249, 115, 22, 1)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                },
+                                color: '#374151'
+                            },
+                            ticks: {
+                                backdropColor: 'rgba(255, 255, 255, 0.75)',
+                                color: '#4B5563',
+                                stepSize: 1,
+                                beginAtZero: true,
+                                max: 5
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r + ' 점';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
